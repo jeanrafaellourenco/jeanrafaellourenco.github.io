@@ -101,7 +101,7 @@ var Terminal = Terminal || function(cmdLineContainer, outputContainer) {
         case 'whoami':
             output("My name is Jean Rafael Lourenço and I am a sysadmin/Devops and a beginner developer.");
             output("I am always open to new challenges and aim to improve my skills every day.");
-            output('<br/><p>* My blog about linux and technology: <a href="https://www.shellnoob.com.br/" target="_blank">shellnoob.com.br</a></p>');
+            //output('<br/><p>* My blog about linux and technology: <a href="https://www.shellnoob.com.br/" target="_blank">shellnoob.com.br</a></p>');
             output('<p>* Linkedin: <a href="https://www.linkedin.com/in/jeanrafaellourenco/" target="_blank">in/jeanrafaellourenco/</a></p>');
           break;
         case 'clear':
@@ -170,7 +170,7 @@ var Terminal = Terminal || function(cmdLineContainer, outputContainer) {
   return {
     init: function() {
       output('<p>Welcome to my Github personal page 20.01.1 LTS (MIT License/Copyright &copy; 2019 - ' +  new Date().getFullYear() + ')</p> ' 
-      + '<p>Last update: Wed Jan  1 11:30:06 -03 2020.</p>'
+      + '<p>Last update: Sun Dez  27 12:27:06 -03 2020.</p>'
       + '<p>&nbsp * Author: <a href="https://github.com/jeanrafaellourenco" target="_blank">github/jeanrafaellourenco</a></p><br/>'
         + "<p>You are in a limited shell.</p>" + "<p>Type '?' or 'help' to get the list of allowed commands.</p>");
     },
