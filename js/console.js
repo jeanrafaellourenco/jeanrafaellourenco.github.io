@@ -11,7 +11,7 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
   var output_ = document.querySelector(outputContainer);
 
   const CMDS_ = [
-    'whoami', 'reload', 'clear', 'date', 'echo', 'ls', 'cd', 'help'
+    'whoami', 'reload', 'clear', 'date', 'echo', 'ls', 'cd', 'help', ' exit'
   ];
 
   var history_ = [];
@@ -135,6 +135,9 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
             output(`cd ${dir}: No such file or directory`);
           }
           break;
+        case "exit":
+          window.location.replace("https://github.com/jeanrafaellourenco");  
+        break;
         default:
           if (cmd) {
             output('*** forbidden command: ' + cmd);
@@ -184,7 +187,7 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
   return {
     init: function () {
       output('<p>Welcome to my personal page 20.12.1 (MIT License/Copyright &copy; 2019 - ' + new Date().getFullYear() + ')</p> '
-        + '<p>Last update: Sun Dez  28 15:50:23 -03 2020.</p>'
+        + '<p>Last update: Sun Dez  28 17:25:36 -03 2020.</p>'
         + '<p>&nbsp * Author: <a style="color:white;text-decoration: underline;" href="https://github.com/jeanrafaellourenco" target="_blank">github/jeanrafaellourenco</a></p><br/>'
         + "<p>You are in a limited shell.</p>" + "<p>Type '?' or 'help' to get the list of allowed commands.</p>");
     },
