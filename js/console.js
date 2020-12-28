@@ -184,7 +184,7 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
   return {
     init: function () {
       output('<p>Welcome to my personal page 20.12.1 (MIT License/Copyright &copy; 2019 - ' + new Date().getFullYear() + ')</p> '
-        + '<p>Last update: Sun Dez  28 11:17:16 -03 2020.</p>'
+        + '<p>Last update: Sun Dez  28 11:50:16 -03 2020.</p>'
         + '<p>&nbsp * Author: <a style="color:white;text-decoration: underline;" href="https://github.com/jeanrafaellourenco" target="_blank">github/jeanrafaellourenco</a></p><br/>'
         + "<p>You are in a limited shell.</p>" + "<p>Type '?' or 'help' to get the list of allowed commands.</p>");
     },
