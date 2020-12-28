@@ -1,7 +1,7 @@
-var util = util || {};
-util.toArray = function(list) {
-  return Array.prototype.slice.call(list || [], 0);
-};
+// var util = util || {};
+// util.toArray = function(list) {
+//   return Array.prototype.slice.call(list || [], 0);
+// };
 
 var Terminal = Terminal || function(cmdLineContainer, outputContainer) {
   window.URL = window.URL || window.webkitURL;
@@ -121,9 +121,9 @@ var Terminal = Terminal || function(cmdLineContainer, outputContainer) {
           break;
           case "ls":  
           output('total 14<br>' 
-          + 'drwxr-xr-x 2  jeanrafaellourenco  jeanrafaellourenco  4096  Dez  14  14:01  2020  <b><a class="link" href="https://github.com/jeanrafaellourenco" target="_blank">github</a></b><br>'
-          + 'drwxr-xr-x 2  jeanrafaellourenco  jeanrafaellourenco  4096  Dez  14  15:50  2020  <b><a class="link" href="https://www.linkedin.com/in/jeanrafaellourenco/" target="_blank">linkedin</a></b><br>'
-          + 'drwxr-xr-x 2  jeanrafaellourenco  jeanrafaellourenco  4096  Dez  14  21:41  2020  <b><a class="link" href="https://twitter.com/vidasocialzero" target="_blank">twitter</a></b>')
+          + 'drwxr-xr-x 2  jeanrafaellourenco  jeanrafaellourenco  4096  Dez  14  14:01  2020  <b><a href="https://github.com/jeanrafaellourenco" target="_blank">github</a></b><br>'
+          + 'drwxr-xr-x 2  jeanrafaellourenco  jeanrafaellourenco  4096  Dez  14  15:50  2020  <b><a href="https://www.linkedin.com/in/jeanrafaellourenco/" target="_blank">linkedin</a></b><br>'
+          + 'drwxr-xr-x 2  jeanrafaellourenco  jeanrafaellourenco  4096  Dez  14  21:41  2020  <b><a href="https://twitter.com/vidasocialzero" target="_blank">twitter</a></b>')
           break;
         default:
           if (cmd) {
@@ -173,9 +173,9 @@ var Terminal = Terminal || function(cmdLineContainer, outputContainer) {
   //
   return {
     init: function() {
-      output('<p>Welcome to my personal page 20.12.0 (MIT License/Copyright &copy; 2019 - ' +  new Date().getFullYear() + ')</p> ' 
-      + '<p>Last update: Sun Dez  27 19:12:06 -03 2020.</p>'
-      + '<p>&nbsp * Author: <a href="https://github.com/jeanrafaellourenco" target="_blank">github/jeanrafaellourenco</a></p><br/>'
+      output('<p>Welcome to my personal page 20.12.1 (MIT License/Copyright &copy; 2019 - ' +  new Date().getFullYear() + ')</p> ' 
+      + '<p>Last update: Sun Dez  28 11:17:16 -03 2020.</p>'
+      + '<p>&nbsp * Author: <a style="color:white;text-decoration: underline;" href="https://github.com/jeanrafaellourenco" target="_blank">github/jeanrafaellourenco</a></p><br/>'
       + "<p>You are in a limited shell.</p>" + "<p>Type '?' or 'help' to get the list of allowed commands.</p>");
     },
     output: output
