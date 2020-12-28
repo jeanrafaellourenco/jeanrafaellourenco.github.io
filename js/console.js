@@ -1,9 +1,9 @@
 var util = util || {};
-util.toArray = function(list) {
+util.toArray = function (list) {
   return Array.prototype.slice.call(list || [], 0);
 };
 
-var Terminal = Terminal || function(cmdLineContainer, outputContainer) {
+var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
   window.URL = window.URL || window.webkitURL;
   window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
 
@@ -11,16 +11,14 @@ var Terminal = Terminal || function(cmdLineContainer, outputContainer) {
   var output_ = document.querySelector(outputContainer);
 
   const CMDS_ = [
-    'whoami', 'reload', 'clear', 'date', 'echo', 'ls', 'help'
+    'whoami', 'reload', 'clear', 'date', 'echo', 'ls', 'cd', 'help'
   ];
 
-  var fs_ = null;
-  var cwd_ = null;
   var history_ = [];
   var histpos_ = 0;
   var histtemp_ = 0;
 
-  window.addEventListener('click', function(e) {
+  window.addEventListener('click', function (e) {
     cmdLine_.focus();
   }, false);
 
@@ -86,20 +84,20 @@ var Terminal = Terminal || function(cmdLineContainer, outputContainer) {
       output_.appendChild(line);
 
       if (this.value && this.value.trim()) {
-        var args = this.value.split(' ').filter(function(val, i) {
+        var args = this.value.split(' ').filter(function (val, i) {
           return val;
         });
         var cmd = args[0].toLowerCase();
         args = args.splice(1); // Remove cmd from arg list.
       }
 
-      function refreshPage(){
+      function refreshPage() {
         window.location.reload();
-    } 
+      }
 
       switch (cmd) {
         case 'whoami':
-            output("My name is Jean Rafael Lourenço and I'm a sysadmin/Devops and a beginner developer.<br>"
+          output("My name is Jean Rafael Lourenço and I'm a sysadmin/Devops and a beginner developer.<br>"
             + "I'm always open to new challenges and aim to improve my skills every day.");
           break;
         case 'clear':
@@ -107,10 +105,10 @@ var Terminal = Terminal || function(cmdLineContainer, outputContainer) {
           this.value = '';
           return;
         case 'date':
-          output( new Date() );
+          output(new Date());
           break;
         case 'echo':
-          output( args.join(' ') );
+          output(args.join(' '));
           break;
         case "help":
         case "?":
@@ -119,11 +117,23 @@ var Terminal = Terminal || function(cmdLineContainer, outputContainer) {
         case "reload":
           refreshPage();
           break;
-          case "ls":  
-          output('total 14<br>' 
-          + 'drwxr-xr-x 2  jeanrafaellourenco  jeanrafaellourenco  4096  Dez  14  14:01  2020  <b><a class="link" href="https://github.com/jeanrafaellourenco" target="_blank">github</a></b><br>'
-          + 'drwxr-xr-x 2  jeanrafaellourenco  jeanrafaellourenco  4096  Dez  14  15:50  2020  <b><a class="link" href="https://www.linkedin.com/in/jeanrafaellourenco/" target="_blank">linkedin</a></b><br>'
-          + 'drwxr-xr-x 2  jeanrafaellourenco  jeanrafaellourenco  4096  Dez  14  21:41  2020  <b><a class="link" href="https://twitter.com/vidasocialzero" target="_blank">twitter</a></b>')
+        case "ls":
+          output('total 14<br>'
+            + 'drwxr-xr-x 2  jeanrafaellourenco  jeanrafaellourenco  4096  Dez  14  14:01  2020  <b><a href="https://github.com/jeanrafaellourenco" target="_blank">github</a></b><br>'
+            + 'drwxr-xr-x 2  jeanrafaellourenco  jeanrafaellourenco  4096  Dez  14  15:50  2020  <b><a href="https://www.linkedin.com/in/jeanrafaellourenco/" target="_blank">linkedin</a></b><br>'
+            + 'drwxr-xr-x 2  jeanrafaellourenco  jeanrafaellourenco  4096  Dez  14  21:41  2020  <b><a href="https://twitter.com/vidasocialzero" target="_blank">twitter</a></b>')
+          break;
+        case "cd":
+          var dir = args[0].toLowerCase();
+          if (dir == 'github' || dir == 'github/') {
+            window.open("https://github.com/jeanrafaellourenco");
+          } else if (dir == 'linkedin' || dir == 'linkedin/') {
+            window.open("https://www.linkedin.com/in/jeanrafaellourenco/");
+          } else if (dir == 'twitter' || dir == 'twitter/') {
+            window.open("https://twitter.com/vidasocialzero");
+          } else {
+            output(`cd ${dir}: No such file or directory`);
+          }
           break;
         default:
           if (cmd) {
@@ -139,20 +149,20 @@ var Terminal = Terminal || function(cmdLineContainer, outputContainer) {
   //
   function formatColumns_(entries) {
     var maxName = entries[0].name;
-    util.toArray(entries).forEach(function(entry, i) {
+    util.toArray(entries).forEach(function (entry, i) {
       if (entry.name.length > maxName.length) {
         maxName = entry.name;
       }
     });
 
     var height = entries.length <= 3 ?
-        'height: ' + (entries.length * 15) + 'px;' : '';
+      'height: ' + (entries.length * 15) + 'px;' : '';
 
     // 12px monospace font yields ~7px screen width.
     var colWidth = maxName.length * 7;
 
     return ['<div class="ls-files" style="-webkit-column-width:',
-            colWidth, 'px;', height, '">'];
+      colWidth, 'px;', height, '">'];
   }
 
   //
@@ -164,19 +174,19 @@ var Terminal = Terminal || function(cmdLineContainer, outputContainer) {
   function getDocHeight_() {
     var d = document;
     return Math.max(
-        Math.max(d.body.scrollHeight, d.documentElement.scrollHeight),
-        Math.max(d.body.offsetHeight, d.documentElement.offsetHeight),
-        Math.max(d.body.clientHeight, d.documentElement.clientHeight)
+      Math.max(d.body.scrollHeight, d.documentElement.scrollHeight),
+      Math.max(d.body.offsetHeight, d.documentElement.offsetHeight),
+      Math.max(d.body.clientHeight, d.documentElement.clientHeight)
     );
   }
 
   //
   return {
-    init: function() {
-      output('<p>Welcome to my personal page 20.12.0 (MIT License/Copyright &copy; 2019 - ' +  new Date().getFullYear() + ')</p> ' 
-      + '<p>Last update: Sun Dez  27 19:12:06 -03 2020.</p>'
-      + '<p>&nbsp * Author: <a href="https://github.com/jeanrafaellourenco" target="_blank">github/jeanrafaellourenco</a></p><br/>'
-      + "<p>You are in a limited shell.</p>" + "<p>Type '?' or 'help' to get the list of allowed commands.</p>");
+    init: function () {
+      output('<p>Welcome to my personal page 20.12.1 (MIT License/Copyright &copy; 2019 - ' + new Date().getFullYear() + ')</p> '
+        + '<p>Last update: Sun Dez  28 11:50:16 -03 2020.</p>'
+        + '<p>&nbsp * Author: <a style="color:white;text-decoration: underline;" href="https://github.com/jeanrafaellourenco" target="_blank">github/jeanrafaellourenco</a></p><br/>'
+        + "<p>You are in a limited shell.</p>" + "<p>Type '?' or 'help' to get the list of allowed commands.</p>");
     },
     output: output
   }
