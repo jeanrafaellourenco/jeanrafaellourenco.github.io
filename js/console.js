@@ -121,6 +121,7 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
           output('total 14<br>'
             + 'drwxr-xr-x 2  jeanrafaellourenco  jeanrafaellourenco  4096  Dez  14  14:01  2020  <b><a href="https://github.com/jeanrafaellourenco" target="_blank">github</a></b><br>'
             + 'drwxr-xr-x 2  jeanrafaellourenco  jeanrafaellourenco  4096  Dez  14  15:50  2020  <b><a href="https://www.linkedin.com/in/jeanrafaellourenco/" target="_blank">linkedin</a></b><br>'
+            + 'drwxr-xr-x 2  jeanrafaellourenco  jeanrafaellourenco  4096  Jan  01  09:58  2021  <b><a href="https://jeanrafaellourenco.github.io/meu_ip/" target="_blank">meu_ip</a></b><br>'     
             + 'drwxr-xr-x 2  jeanrafaellourenco  jeanrafaellourenco  4096  Dez  14  21:41  2020  <b><a href="https://twitter.com/vidasocialzero" target="_blank">twitter</a></b>')
           break;
         case "cd":
@@ -129,6 +130,8 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
             window.open("https://github.com/jeanrafaellourenco");
           } else if (dir == 'linkedin' || dir == 'linkedin/') {
             window.open("https://www.linkedin.com/in/jeanrafaellourenco/");
+          } else if (dir == 'meu_ip' || dir == 'meu_ip/') {
+            window.open("https://jeanrafaellourenco.github.io/meu_ip/");
           } else if (dir == 'twitter' || dir == 'twitter/') {
             window.open("https://twitter.com/vidasocialzero");
           } else {
