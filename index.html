@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>jeanrafaellourenco</title>
+  <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+  <style>
+    ::selection {
+      background: #000000;
+    }
+
+    a {
+      color: #4351d4;
+      background-color: transparent;
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: #4351d4;
+      background-color: transparent;
+      text-decoration: underline;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      font-size: 16pt;
+      font-family: Inconsolata, monospace;
+      color: white;
+      background-color: black;
+    }
+
+    #container {
+      padding: .1em 1.5em 1em 1em;
+    }
+
+    #container output {
+      clear: both;
+      width: 100%;
+    }
+
+    #container output h3 {
+      margin: 0;
+    }
+
+    #container output pre {
+      margin: 0;
+    }
+
+    .input-line {
+      display: -webkit-box;
+      -webkit-box-orient: horizontal;
+      -webkit-box-align: stretch;
+      display: -moz-box;
+      -moz-box-orient: horizontal;
+      -moz-box-align: stretch;
+      display: box;
+      box-orient: horizontal;
+      box-align: stretch;
+      clear: both;
+    }
+
+    .input-line>div:nth-child(2) {
+      -webkit-box-flex: 1;
+      -moz-box-flex: 1;
+      box-flex: 1;
+    }
+
+    .prompt {
+      white-space: nowrap;
+      color: #278400;
+      margin-right: 7px;
+      display: -webkit-box;
+      -webkit-box-pack: center;
+      -webkit-box-orient: vertical;
+      display: -moz-box;
+      -moz-box-pack: center;
+      -moz-box-orient: vertical;
+      display: box;
+      box-pack: center;
+      box-orient: vertical;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+
+    .cmdline {
+      outline: none;
+      background-color: transparent;
+      margin: 0;
+      width: 100%;
+      font: inherit;
+      border: none;
+      color: inherit;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container">
+    <output></output>
+    <div id="input-line" class="input-line">
+      <div class="prompt"></div>
+      <div><input class="cmdline" autofocus></div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="js/console.js"></script>
+  <script src="js/index.js"></script>
+  <script>
+    var util = util || {};
+    util.toArray = function (list) {
+      return Array.prototype.slice.call(list || [], 0);
+    };
+
+    var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
+      window.URL = window.URL || window.webkitURL;
+      window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+
+      var cmdLine_ = document.querySelector(cmdLineContainer);
+      var output_ = document.querySelector(outputContainer);
+
+      const CMDS_ = [
+        'whoami', 'reload', 'clear', 'date', 'echo', 'ls', 'cd', 'help', 'exit'
+      ];
+
+      var history_ = [];
+      var histpos_ = 0;
+      var histtemp_ = 0;
+
+      window.addEventListener('click', function (e) {
+        cmdLine_.focus();
+      }, false);
+
+      cmdLine_.addEventListener('click', inputTextClick_, false);
+      cmdLine_.addEventListener('keydown', historyHandler_, false);
+      cmdLine_.addEventListener('keydown', processNewCommand_, false);
+
+      function inputTextClick_(e) {
+        this.value = this.value;
+      }
+
+      function historyHandler_(e) {
+        if (history_.length) {
+          if (e.keyCode == 38 || e.keyCode == 40) {
+            if (history_[histpos_]) {
+              history_[histpos_] = this.value;
+            } else {
+              histtemp_ = this.value;
+            }
+          }
+
+          if (e.keyCode == 38) { // up
+            histpos_--;
+            if (histpos_ < 0) {
+              histpos_ = 0;
+            }
+          } else if (e.keyCode == 40) { // down
+            histpos_++;
+            if (histpos_ > history_.length) {
+              histpos_ = history_.length;
+            }
+          }
+
+          if (e.keyCode == 38 || e.keyCode == 40) {
+            this.value = history_[histpos_] ? history_[histpos_] : histtemp_;
+            this.value = this.value; // Sets cursor to end of input.
+          }
+        }
+      }
+
+      function processNewCommand_(e) {
+
+        if (e.keyCode == 9) { // tab
+          e.preventDefault();
+          // Implement tab suggest.
+        } else if (e.keyCode == 13) { // enter
+          if (this.value) {
+            history_[history_.length] = this.value;
+            histpos_ = history_.length;
+          }
+
+          var line = this.parentNode.parentNode.cloneNode(true);
+          line.removeAttribute('id')
+          line.classList.add('line');
+          var input = line.querySelector('input.cmdline');
+          input.autofocus = false;
+          input.readOnly = true;
+          output_.appendChild(line);
+
+          if (this.value && this.value.trim()) {
+            var args = this.value.split(' ').filter(function (val, i) {
+              return val;
+            });
+            var cmd = args[0].toLowerCase();
+            args = args.splice(1); // Remove cmd from arg list.
+          }
+
+          function refreshPage() {
+            window.location.reload();
+          }
+
+          switch (cmd) {
+            case 'whoami':
+              output("Cybersecurity Analyst, Web Application Tester, CTF Player, Python and Bash Script Developer.<br>"
+                + "I'm always open to new challenges and aim to improve my skills every day.");
+              break;
+            case 'clear':
+              output_.innerHTML = '';
+              this.value = '';
+              return;
+            case 'date':
+              output(new Date());
+              break;
+            case 'echo':
+              output(args.join(' '));
+              break;
+            case "help":
+            case "?":
+              output('<div class="ls-files">' + CMDS_.join('&nbsp;&nbsp'));
+              break;
+            case "reload":
+              refreshPage();
+              break;
+            case "ls":
+              output('total 12k<br>'
+                + 'drwxrwxr-x 3   jeanrafaellourenco  jeanrafaellourenco  4,0K  Sep  02  23:22  2021 .<br>'
+                + 'drwxrwxr-x 3   jeanrafaellourenco  jeanrafaellourenco  4,0K  Sep  02  23:22  2021 ..<br>'
+                + '-rw-rw-r-- 1   jeanrafaellourenco  jeanrafaellourenco  4,0K  Sep  02  23:40  2021  <b><a href="https://github.com/jeanrafaellourenco" target="_blank">github</a></b><br>'
+                + '-rw-rw-r-- 1   jeanrafaellourenco  jeanrafaellourenco  4,0K  Sep  08  19:15  2022  <b><a href="https://www.linkedin.com/in/jeanrafaellourenco/" target="_blank">linkedin</a></b><br>')
+              break;
+            case "cd":
+              var dir = args[0].toLowerCase();
+              if (dir == 'github' || dir == 'github/') {
+                window.open("https://github.com/jeanrafaellourenco");
+              } else if (dir == 'linkedin' || dir == 'linkedin/') {
+                window.open("https://www.linkedin.com/in/jeanrafaellourenco/");
+              } else if (dir == 'root' || dir == '/root') {
+                output(`bash: cd: ${dir}: Permission denied`);
+              } else {
+                output(`bash: cd: ${dir}: No such file or directory`);
+              }
+              break;
+            case "exit":
+              window.location.replace("https://github.com/jeanrafaellourenco");
+              break;
+            default:
+              if (cmd) {
+                output('*** forbidden command: ' + cmd + ' ***');
+              }
+          };
+
+          window.scrollTo(0, getDocHeight_());
+          this.value = '';
+        }
+      }
+
+      function formatColumns_(entries) {
+        var maxName = entries[0].name;
+        util.toArray(entries).forEach(function (entry, i) {
+          if (entry.name.length > maxName.length) {
+            maxName = entry.name;
+          }
+        });
+
+        var height = entries.length <= 3 ?
+          'height: ' + (entries.length * 15) + 'px;' : '';
+
+        var colWidth = maxName.length * 7;
+
+        return ['<div class="ls-files" style="-webkit-column-width:',
+          colWidth, 'px;', height, '">'];
+      }
+
+      function output(html) {
+        output_.insertAdjacentHTML('beforeEnd', '<p>' + html + '</p>');
+      }
+
+      function getDocHeight_() {
+        var d = document;
+        return Math.max(
+          Math.max(d.body.scrollHeight, d.documentElement.scrollHeight),
+          Math.max(d.body.offsetHeight, d.documentElement.offsetHeight),
+          Math.max(d.body.clientHeight, d.documentElement.clientHeight)
+        );
+      }
+
+      return {
+        init: function () {
+          output('Welcome to my personal page 24.04.1 (MIT License/Copyright © ' + new Date().getFullYear() + ')</p> '
+            + '<p>Last update: Mon Apr 08 11:15:11 -03 2024.</p>'
+            + '<p>&nbsp * Author: <a style="color:white;text-decoration: underline;" href="https://github.com/jeanrafaellourenco" target="_blank">github/jeanrafaellourenco</a></p><br/>'
+            + "<p>You are in a limited shell.</p>" + "<p>Type '?' or 'help' to get the list of allowed commands.</p>");
+        },
+        output: output
+      }
+    };
+    $(function () {
+      $('.prompt').html('jeanrafaellourenco@github.io:~$ ');
+      var term = new Terminal('#input-line .cmdline', '#container output');
+      term.init();
+    });
+  </script>
+</body>
+
+</html>
