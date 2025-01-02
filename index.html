@@ -89,6 +89,34 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        async function fetchLastUpdate() {
+            const apiUrl = "https://api.github.com/repos/jeanrafaellourenco/jeanrafaellourenco.github.io";
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error("Failed to fetch data from GitHub API.");
+
+                const data = await response.json();
+                const updatedDate = new Date(data.updated_at);
+
+                const options = {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    timeZoneName: 'short'
+                };
+
+                return updatedDate.toLocaleDateString('en-US', options);
+            } catch (error) {
+                console.error("Error fetching last update:", error);
+                return "Error fetching update.";
+            }
+        }
+
         var util = {
             toArray: function (list) {
                 return Array.prototype.slice.call(list || [], 0);
@@ -221,9 +249,12 @@
             }
 
             return {
-                init: function () {
-                    output(`Welcome to my personal page 24.04.1 (MIT License/Copyright © ${new Date().getFullYear()})</p>
-                            <p>Last update: Mon Apr 08 11:15:11 -03 2024.</p>
+                init: async function () {
+                    const lastUpdate = await fetchLastUpdate();
+                    const today = new Date();
+                    const formattedDate = `${today.getFullYear().toString().slice(2)}.${(today.getMonth() + 1).toString().padStart(2, '0')}.${today.getDate().toString().padStart(2, '')}`;
+                    output(`Welcome to my personal page ${formattedDate} (MIT License/Copyright © ${today.getFullYear()})</p>
+                            <p>Last update: ${lastUpdate}</p>
                             <p>&nbsp * Author: <a style="color:white;text-decoration: underline;" href="https://github.com/jeanrafaellourenco" target="_blank">github/jeanrafaellourenco</a></p><br/>
                             <p>You are in a limited shell.</p><p>Type '?' or 'help' to get the list of allowed commands.</p>`);
                 },
