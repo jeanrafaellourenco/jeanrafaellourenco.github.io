@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>jeanrafaellourenco</title>
-    <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
+    <link rel="shortcut icon" href="assets/images/favicon.png" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
     <style>
         ::selection {
@@ -190,8 +190,7 @@
             function executeCommand(cmd, args) {
                 switch (cmd) {
                     case 'whoami':
-                        output("Cybersecurity Analyst, Web Application Tester, CTF Player, Python and Bash Script Developer.<br>"
-                            + "I'm always open to new challenges and aim to improve my skills every day.");
+                        window.open("https://github.com/jeanrafaellourenco/whoami", "_blank");
                         break;
                     case 'clear':
                         output_.innerHTML = '';
@@ -216,7 +215,7 @@
                         handleCdCommand(args[0]);
                         break;
                     case 'exit':
-                        window.location.replace("https://github.com/jeanrafaellourenco");
+                        window.open("https://github.com/jeanrafaellourenco", "_blank");
                         break;
                     default:
                         if (cmd) output(`*** forbidden command: ${cmd} ***`);

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="keywords" content="Cybersecurity Analyst, Web Application Tester, CTF Player, Python and Bash Script Developer.">
+    <meta name="description" content="@jeanrafaellourenco portfolio.">
+    <meta name="author" content="Jean Rafael Lourenço">
+    <title>Whoami</title>
+    <link rel="icon" href="../assets/images/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kelly+Slab&display=swap');
+
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Kelly Slab', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            height: 100vh;
+            position: relative;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Mantém o efeito de fundo sem interferir nos botões */
+        }
+
+        .prompt {
+            text-align: center;
+            padding: 20px;
+            margin: 10px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            z-index: 1; /* Garante que os elementos fiquem sobre o efeito */
+        }
+
+        .glitch {
+            font-size: 45px;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+        }
+
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 #49FC00;
+            animation: glitch-anim 2.5s infinite linear alternate-reverse;
+        }
+
+        .glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 #b300fc;
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(136px, 9999px, 50px, 0); }
+            50% { clip: rect(0px, 9999px, 12px, 0); }
+            100% { clip: rect(49px, 9999px, 135px, 0); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip: rect(118px, 9999px, 37px, 0); }
+            50% { clip: rect(12px, 9999px, 143px, 0); }
+            100% { clip: rect(44px, 9999px, 148px, 0); }
+        }
+
+        p {
+            font-size: 25px;
+            margin: 10px 0;
+        }
+
+        .logo {
+            max-width: 300px;
+            margin-bottom: 20px;
+            border-radius: 50%;
+        }
+
+        .message {
+            text-align: center;
+        }
+
+        .message a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        button {
+            background: transparent;
+            border: 2px solid #47fc0000;
+            color: white;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 15px;
+            font-weight: bold;
+            padding: 5px 20px;
+            text-decoration: none;
+            text-shadow: 0px 0px 0px;
+            cursor: pointer;
+        }
+
+        audio {
+            margin-top: 20px;
+        }
+
+        footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        padding: 10px 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        footer p {
+        margin: 0;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 14px;
+        }
+
+        footer a {
+        color: #49FC00;
+        text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Canvas para o efeito Matrix -->
+    <canvas id="matrixCanvas"></canvas>
+
+    <div class="prompt">
+        <img class="logo" src="../assets/images/profile-glitch.gif" alt="foto-perfil">
+        <div class="glitch" data-text="Jean Rafael Lourenço"><font color="#49FC00">Jean</font> Rafael Lourenço</div>
+        <div class="message">
+            <p>&gt;"Cybersecurity Analyst"&lt;</p>
+        </div>
+    </div>
+    
+    <!-- https://git.io/typing-svg -->
+    <a><img src="https://readme-typing-svg.demolab.com?font=&size=20&pause=1000&center=true&color=24F73A&center=true&multiline=true&width=950&lines=Web Application Tester, CTF Player, Python and Bash Script Developer." alt="Typing SVG" /></a>
+    
+
+    <!-- Botão Play/Pause -->
+    <br><br>
+    <button class="play-btn" id="playPause">▶</button>
+
+    <!-- Elemento de áudio sem autoplay e loop -->
+    <audio id="audio">
+        <source src="" type="audio/mpeg">
+        Seu navegador não suporta áudio.
+    </audio>
+
+
+    <script>
+        // Definição da playlist em sequência
+        const songs = [
+            { name: "Antraz - Nenhum Sistema Está a Salvo", src: "../assets/music/Nenhum Sistema Está a Salvo-Antraz.mp3" },
+            { name: "Antraz - Piratas Do Silicio", src: "../assets/music/Piratas Do Silicio-Antraz.mp3" },
+            { name: "Antraz - Matrix", src: "../assets/music/Matrix-Antraz.mp3" }
+            // Adicione mais músicas conforme necessário
+            // Artist: Antraz 
+            // Spotify: https://open.spotify.com/intl-pt/artist/4gJVFIdr0jCw4HDaX0cTdk 
+            // Deezer: https://www.deezer.com/br/artist/14185607/top_track
+            // YouTube: https://www.youtube.com/@ANTRAZMENTALZ
+        ];
+
+        const audio = document.getElementById("audio");
+        audio.volume = 0.5; // Volume inicial de 50%
+
+        const playPauseButton = document.getElementById("playPause");
+        let currentSong = null;
+        // Escolhe aleatoriamente o índice da primeira música
+        let currentIndex = Math.floor(Math.random() * songs.length);
+
+        // Atualiza o botão para exibir o nome da música escolhida
+        playPauseButton.textContent = "▶ " + songs[currentIndex].name;
+
+        // Função para tocar uma música e atualizar o botão com o nome da faixa
+        function playSong(song) {
+            currentSong = song;
+            audio.src = song.src;
+            audio.play();
+            playPauseButton.textContent = "⏸ " + song.name;
+        }
+
+        // Quando a música terminar, toca a próxima em sequência
+        audio.onended = () => {
+            currentIndex = (currentIndex + 1) % songs.length;
+            playSong(songs[currentIndex]);
+        };
+
+        // Evento de clique para iniciar ou pausar a reprodução
+        playPauseButton.addEventListener("click", () => {
+            if (!currentSong) {
+                // Primeiro clique: inicia a música escolhida aleatoriamente
+                playSong(songs[currentIndex]);
+            } else if (audio.paused) {
+                audio.play();
+                playPauseButton.textContent = "⏸ " + currentSong.name;
+            } else {
+                audio.pause();
+                playPauseButton.textContent = "▶ " + currentSong.name;
+            }
+        });
+
+        // Script do efeito Matrix
+        const canvas = document.getElementById("matrixCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Ajusta o canvas para cobrir toda a tela
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const fontSize = 16;
+        const columns = Math.floor(canvas.width / fontSize);
+        const drops = Array(columns).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = "rgba(73, 252, 0, 0.2)";
+
+            ctx.font = `${fontSize}px monospace`;
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = Math.random() > 0.5 ? "0" : "1";
+                const x = i * fontSize;
+                const y = drops[i] * fontSize;
+
+                ctx.fillText(text, x, y);
+
+                if (y > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 50);
+
+        window.addEventListener("resize", () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+    
+    
+    <footer>
+        <p>
+            <a href="https://github.com/jeanrafaellourenco" target="_blank">
+                <i class="fa-brands fa-github" style="color: #fff;"></i> Github
+            </a>
+            |
+            <a href="https://www.linkedin.com/in/jeanrafaellourenco/" target="_blank">
+                <i class="fa-brands fa-linkedin" style="color: #fff;"></i> LinkedIn
+            </a>
+            |
+            <a href="https://jeanrafaellourenco.github.io/" target="_blank">
+                <i class="fa-solid fa-globe" style="color: #fff;"></i> Site
+            </a>
+        </p>
+    </footer>
+
+</body>
+</html>
