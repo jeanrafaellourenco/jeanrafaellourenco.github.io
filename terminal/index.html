@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>jeanrafaellourenco</title>
+    <link rel="shortcut icon" href="../assets/images/favicon.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+    <style>
+        ::selection {
+            background: #000000;
+        }
+
+        a {
+            color: #4351d4;
+            background-color: transparent;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-size: 16pt;
+            font-family: Inconsolata, monospace;
+            color: white;
+            background-color: black;
+        }
+
+        #container {
+            padding: 0.1em 1.5em 1em 1em;
+        }
+
+        #container output {
+            clear: both;
+            width: 100%;
+        }
+
+        #container output h3,
+        #container output pre {
+            margin: 0;
+        }
+
+        .input-line {
+            display: flex;
+            clear: both;
+        }
+
+        .input-line>div:nth-child(2) {
+            flex: 1;
+        }
+
+        .prompt {
+            white-space: nowrap;
+            color: #278400;
+            margin-right: 7px;
+            display: flex;
+            align-items: center;
+            user-select: none;
+        }
+
+        .cmdline {
+            outline: none;
+            background-color: transparent;
+            margin: 0;
+            width: 100%;
+            font: inherit;
+            border: none;
+            color: inherit;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <output></output>
+        <div id="input-line" class="input-line">
+            <div class="prompt"></div>
+            <div><input class="cmdline" autofocus></div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        async function fetchLastUpdate() {
+            const apiUrl = "https://api.github.com/repos/jeanrafaellourenco/jeanrafaellourenco.github.io";
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error("Failed to fetch data from GitHub API.");
+
+                const data = await response.json();
+                const updatedDate = new Date(data.updated_at);
+
+                const options = {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    timeZoneName: 'short'
+                };
+
+                return updatedDate.toLocaleDateString('en-US', options);
+            } catch (error) {
+                console.error("Error fetching last update:", error);
+                return "Error fetching update.";
+            }
+        }
+
+        var util = {
+            toArray: function (list) {
+                return Array.prototype.slice.call(list || [], 0);
+            }
+        };
+
+        function Terminal(cmdLineContainer, outputContainer) {
+            var cmdLine_ = document.querySelector(cmdLineContainer);
+            var output_ = document.querySelector(outputContainer);
+
+            const CMDS_ = ['whoami', 'reload', 'clear', 'date', 'echo', 'ls', 'cd', 'help', 'exit'];
+
+            var history_ = [];
+            var histpos_ = 0;
+            var histtemp_ = 0;
+
+            window.addEventListener('click', () => cmdLine_.focus());
+
+            cmdLine_.addEventListener('click', inputTextClick_);
+            cmdLine_.addEventListener('keydown', historyHandler_);
+            cmdLine_.addEventListener('keydown', processNewCommand_);
+
+            function inputTextClick_() {
+                this.value = this.value; // Set cursor to end
+            }
+
+            function historyHandler_(e) {
+                if (!history_.length) return;
+
+                if (e.keyCode === 38 || e.keyCode === 40) { // Up or Down
+                    history_[histpos_] = this.value || histtemp_;
+
+                    if (e.keyCode === 38) { // Up
+                        histpos_ = Math.max(histpos_ - 1, 0);
+                    } else if (e.keyCode === 40) { // Down
+                        histpos_ = Math.min(histpos_ + 1, history_.length);
+                    }
+
+                    this.value = history_[histpos_] || histtemp_;
+                    this.value = this.value; // Set cursor to end
+                }
+            }
+
+            function processNewCommand_(e) {
+                if (e.keyCode === 13) { // Enter
+                    if (this.value) {
+                        history_.push(this.value);
+                        histpos_ = history_.length;
+                    }
+
+                    var line = this.parentNode.parentNode.cloneNode(true);
+                    line.removeAttribute('id');
+                    line.classList.add('line');
+                    var input = line.querySelector('input.cmdline');
+                    input.autofocus = false;
+                    input.readOnly = true;
+                    output_.appendChild(line);
+
+                    if (this.value.trim()) {
+                        var args = this.value.split(' ').filter(Boolean);
+                        var cmd = args.shift().toLowerCase();
+
+                        executeCommand(cmd, args);
+                    }
+
+                    window.scrollTo(0, document.body.scrollHeight);
+                    this.value = '';
+                }
+            }
+
+            function executeCommand(cmd, args) {
+                switch (cmd) {
+                    case 'whoami':
+                        window.open("https://jeanrafaellourenco.github.io/", "_blank");
+                        break;
+                    case 'clear':
+                        output_.innerHTML = '';
+                        break;
+                    case 'date':
+                        output(new Date());
+                        break;
+                    case 'echo':
+                        output(args.join(' '));
+                        break;
+                    case 'help':
+                    case '?':
+                        output(CMDS_.join('&nbsp;&nbsp'));
+                        break;
+                    case 'reload':
+                        window.location.reload();
+                        break;
+                    case 'ls':
+                        output(getLsOutput());
+                        break;
+                    case 'cd':
+                        handleCdCommand(args[0]);
+                        break;
+                    case 'exit':
+                        window.open("https://github.com/jeanrafaellourenco", "_blank");
+                        break;
+                    default:
+                        if (cmd) output(`*** forbidden command: ${cmd} ***`);
+                }
+            }
+
+            function getLsOutput() {
+                return `total 12k<br>
+                        drwxrwxr-x 3 jeanrafaellourenco jeanrafaellourenco 4,0K Sep 02 23:22 2021 .<br>
+                        drwxrwxr-x 3 jeanrafaellourenco jeanrafaellourenco 4,0K Sep 02 23:22 2021 ..<br>
+                        -rw-rw-r-- 1 jeanrafaellourenco jeanrafaellourenco 4,0K Sep 02 23:40 2021 <b><a href="https://github.com/jeanrafaellourenco" target="_blank">github</a></b><br>
+                        -rw-rw-r-- 1 jeanrafaellourenco jeanrafaellourenco 4,0K Sep 08 19:15 2022 <b><a href="https://www.linkedin.com/in/jeanrafaellourenco/" target="_blank">linkedin</a></b><br>`;
+            }
+
+            function handleCdCommand(dir) {
+                const lowerDir = dir.toLowerCase();
+                if (lowerDir === 'github' || lowerDir === 'github/') {
+                    window.open("https://github.com/jeanrafaellourenco");
+                } else if (lowerDir === 'linkedin' || lowerDir === 'linkedin/') {
+                    window.open("https://www.linkedin.com/in/jeanrafaellourenco/");
+                } else if (lowerDir === 'root' || lowerDir === '/root') {
+                    output(`bash: cd: ${dir}: Permission denied`);
+                } else {
+                    output(`bash: cd: ${dir}: No such file or directory`);
+                }
+            }
+
+            function output(html) {
+                output_.insertAdjacentHTML('beforeEnd', `<p>${html}</p>`);
+            }
+
+            return {
+                init: async function () {
+                    const lastUpdate = await fetchLastUpdate();
+                    const today = new Date();
+                    const formattedDate = `${today.getFullYear().toString().slice(2)}.${(today.getMonth() + 1).toString().padStart(2, '0')}.${today.getDate().toString().padStart(2, '')}`;
+                    output(`Welcome to my personal page ${formattedDate} (MIT License/Copyright © ${today.getFullYear()})</p>
+                            <p>Last update: ${lastUpdate}</p>
+                            <p>&nbsp * Author: <a style="color:white;text-decoration: underline;" href="https://github.com/jeanrafaellourenco" target="_blank">github/jeanrafaellourenco</a></p><br/>
+                            <p>You are in a limited shell.</p><p>Type '?' or 'help' to get the list of allowed commands.</p>`);
+                },
+                output: output
+            };
+        }
+
+        $(function () {
+            $('.prompt').html('jeanrafaellourenco@github.io:~$ ');
+            var term = new Terminal('#input-line .cmdline', '#container output');
+            term.init();
+        });
+    </script>
+</body>
+
+</html>
